@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 typedef struct {
     char * name;
@@ -22,10 +23,9 @@ typedef struct histo {
 
 void display_grid(int[3][3]);   // Display the grid
 void init_player(player *);     // Let a player choose a name
+void empty_buffer(void);		// Empty buffer
 
 int main(int argc, char *argv[]) {
-    char *welcome = "Welcome to TicTacToe!\n"; //this string can only be read
-    printf("%s",welcome);
     
     // Init mode GUI (=1) or CLI (=0)
     int mode = 0;
@@ -34,11 +34,23 @@ int main(int argc, char *argv[]) {
             mode = 0;
         else if(strcmp(argv[1], "gui") == 0)
             mode = 1;
+        else{
+        	printf("Bad argument - use %s [gui|cli]\n",argv[0]);
+        	return 1;
+        }
     }else{
-        printf("Choose mode :\n0 = CLI\n1 = GUI\n");
-        mode = 0;
+        char modeType[2];
+        mode = -1;
+        while(mode != 0 && mode != 1 ){
+            printf("Choose mode :\n0 = CLI\n1 = GUI\n");
+			scanf ("%d",&mode);
+			empty_buffer();
+        }
     }
-
+    
+    char *welcome = "Welcome to TicTacToe!\n"; //this string can only be read
+    printf("%s",welcome);
+    
     history * histo = malloc(sizeof(history));
     player p1, p2;
     init_player(&p1);
@@ -70,6 +82,14 @@ void display_grid(int grid[3][3]){
         }
     }
     printf("\n");
+}
+
+void empty_buffer(void){
+    int c;
+  
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
 }
 
 
