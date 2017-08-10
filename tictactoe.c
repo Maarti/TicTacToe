@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 typedef struct {
     char * name;
@@ -23,7 +22,7 @@ typedef struct histo {
 
 void display_grid(int[3][3]);   // Display the grid
 void init_player(player *);     // Let a player choose a name
-void empty_buffer(void);		// Empty buffer
+void empty_buffer(void);	    // Empty buffer
 
 int main(int argc, char *argv[]) {
     
