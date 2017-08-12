@@ -7,9 +7,12 @@ I did this to practise my C, not to be rusty.
 
 ### Command Line
 ![Command Line Overview](img/cli_overview_1.png)
+
 ![Command Line Overview](img/cli_overview_2.png)
 
 ### Graphical
+
+*not yet*
 
 ## Getting started
 
