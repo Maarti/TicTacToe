@@ -18,11 +18,13 @@ typedef struct histo {
     player player;
     struct histo * next;
 } history;
-    
+
 
 void display_grid(int[3][3]);       // Display the grid
-player init_player(int numPlayer);  // Let a player choose a name
-void empty_buffer(void);	        // Empty the buffer
+player init_player(int);            // Let a player choose a name
+int check_grid(int[3][3]);          // Check if win or finish
+void empty_buffer(void);            // Empty the buffer
+
 
 int main(int argc, char *argv[]) {
     
@@ -47,21 +49,26 @@ int main(int argc, char *argv[]) {
         }
     }
     
+    // Welcome message
     char *welcome = "Welcome to TicTacToe!\n"; //this string can only be read
     printf("%s",welcome);
     
+    // Game initialization
     history * histo = malloc(sizeof(history));
     player p1 = init_player(1);
     player p2 = init_player(2);
-    
-    printf("\nIt's your turn p1 %s :",p1.name);
-       
     int grid[3][3]={
-        {1,0,0},
-        {0,10,0},
-        {0,0,0}
+        {1,10,1},
+        {1,10,10},
+        {10,1,0}
     };
+    int result = 0;
+    
+    // Game    
+    printf("\nIt's your turn %s :",p1.name);
     display_grid(grid);
+    result = check_grid(grid);
+    printf(" result = %d \n",result);
     
     return 0;
 }
@@ -83,6 +90,64 @@ void display_grid(int grid[3][3]){
         }
     }
     printf("\n");
+}
+
+int check_grid(int grid[3][3]){
+    /*  return 0 : continue playing
+        return 1 : player 1 won
+        return 2 : player 2 won
+        return 3 : draw
+    */
+    
+    int x,y,sum=0;
+    
+    // Check horizontal
+    for(x=0;x<3;x++){
+        sum = 0;
+        for(y=0;y<3;y++){
+            sum+=grid[x][y];
+        }
+        if(sum==3)
+            return 1;
+        if(sum==30)
+            return 2;
+    }
+    
+    // Check vertical
+    for(y=0;y<3;y++){
+        sum = 0;
+        for(x=0;x<3;x++){
+            sum+=grid[x][y];
+        }
+        if(sum==3)
+            return 1;
+        if(sum==30)
+            return 2;
+    }
+    
+    // Check diagonal 1
+    sum = grid[0][0] + grid[1][1] + grid[2][2];
+    if(sum==3)
+        return 1;
+    if(sum==30)
+        return 2;
+        
+    // Check diagonal 1
+    sum = grid[0][2] + grid[1][1] + grid[2][0];
+    if(sum==3)
+        return 1;
+    if(sum==30)
+        return 2;
+    
+    // Check if finished
+    for(x=0; x<3;x++){
+        for(y=0; y<3; y++){
+            if(grid[x][y] == 0)
+                return 0;
+        }
+    }
+        
+    return 3;
 }
 
 void empty_buffer(void){
