@@ -27,7 +27,7 @@ typedef struct histo {
 
 void display_grid(int[3][3],player *,player *);// Display the grid
 player init_player(int,int,char);   // Let a player choose a name
-point input_play(void);             // Ask user input and convert it to point
+point input_play(int[3][3]);        // Ask user input and convert it to point
 void do_play(int[3][3],player *);   // Let a player play in the grid
 int check_grid(int[3][3]);          // Check if win or finish
 void empty_buffer(void);            // Empty the buffer
@@ -113,7 +113,7 @@ void display_grid(int grid[3][3],player *p1, player *p2){
     printf("\n");
 }
 
-point input_play(){
+point input_play(int grid[3][3]){
     int valid=0,x=0,y=0;
     char input[4];  // = [a,1,\n,\0]
     const char *valid_col = "abcABC";
@@ -173,11 +173,17 @@ point input_play(){
     }    
     point p={x,y};
     
+    // If the point is already played, error msg then recursive call
+    if(grid[x][y] != 0){
+        printf("You can't play here!\n\n");
+        return input_play(grid);
+    }
+    
     return p;
 }
 
 void do_play(int grid[3][3],player *p){
-    point play_point = input_play();
+    point play_point = input_play(grid);
     grid[play_point.x][play_point.y] = p->play_value;
 }
 
