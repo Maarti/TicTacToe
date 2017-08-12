@@ -64,26 +64,49 @@ int main(int argc, char *argv[]) {
     history * histo = malloc(sizeof(history));
     player p1 = init_player(1,PLAY_VALUE_1,'X');
     player p2 = init_player(2,PLAY_VALUE_2,'O');
-    int grid[3][3]={
-        {0,0,0},
-        {0,0,0},
-        {0,0,0}
-    };
-    int result = 0;
-    player *current_player = &p1;
     
-    // Game
-    do{
-        display_grid(grid,&p1,&p2);
-        printf("\nIt's your turn %s :\n",current_player->name);
-        do_play(grid,current_player);        
-        result = check_grid(grid);
-        if(current_player == &p1)
-            current_player = &p2;
-        else
-            current_player = &p1;
-     }while(check_grid(grid) == 0);
-    
+    while(1){   // TODO : replace by menu "Play again ? Exit ?"
+        int grid[3][3]={
+            {0,0,0},
+            {0,0,0},
+            {0,0,0}
+        };
+        int result = 0;
+        player *current_player = &p1;
+        
+        // Game
+        do{
+            display_grid(grid,&p1,&p2);
+            printf("\nIt's your turn %s :\n",current_player->name);
+            do_play(grid,current_player);        
+            result = check_grid(grid);
+            if(current_player == &p1)
+                current_player = &p2;
+            else
+                current_player = &p1;
+            
+         }while(!result);
+         
+         display_grid(grid,&p1,&p2);
+         switch (result){
+            case 1 :
+                printf("\n%s won !!!\n",p1.name);
+                p1.score += 1;
+                break;
+            case 2 :
+                printf("\n%s won !!!\n",p2.name);
+                p2.score += 1;
+                break;
+            case 3 :
+                printf("\nDraw game.\n");
+                break;
+            default :
+                printf("\nError occured.\n");
+                return 1;
+                break;
+         }
+         printf("\nScores :\n%d - %s\n%d : %s\n",p1.score,p1.name,p2.score,p2.name);
+    }
     return 0;
 }
 
@@ -121,14 +144,14 @@ point input_play(int grid[3][3]){
     char col='a',row='1';
     
     do{
-        valid = 0;
+        valid = 1;
         printf("Play where ? (ex : a1) ");
         fgets(input, 4, stdin);
         int length = strlen(input);
         
         // Check size
         if(length!=3)
-            valid = 1;
+            valid = 0;
         else{
             // if last char different from \n, it means the buffer is not empty
             if(input[2]!='\n')
@@ -138,12 +161,12 @@ point input_play(int grid[3][3]){
             col = input[0];
             row = input[1];
             if(!strchr(valid_col, col) || !strchr(valid_row,row))
-                valid = 1;
+                valid = 0;
         }
                 
-        if(valid==1)
+        if(valid==0)
             printf("Invalid input\n\n");
-    }while(valid);
+    }while(!valid);
     
     // Convert input to point
     switch(col){
