@@ -26,6 +26,7 @@ typedef struct histo {
 
 void display_grid(int[3][3]);       // Display the grid
 player init_player(int,int);        // Let a player choose a name
+point input_play(void);             // Ask user input and convert it to point
 void do_play(int[3][3],player *);   // Let a player play in the grid
 int check_grid(int[3][3]);          // Check if win or finish
 void empty_buffer(void);            // Empty the buffer
@@ -63,9 +64,9 @@ int main(int argc, char *argv[]) {
     player p1 = init_player(1,PLAY_VALUE_1);
     player p2 = init_player(2,PLAY_VALUE_2);
     int grid[3][3]={
-        {1,10,1},
-        {1,10,10},
-        {10,1,0}
+        {0,0,0},
+        {0,0,0},
+        {0,0,0}
     };
     int result = 0;
     player *current_player = &p1;
@@ -95,7 +96,7 @@ player init_player(int numPlayer, int play_value){
 
 void display_grid(int grid[3][3]){
     int x,y;
-    printf("_____________________________\n  a b c");
+    printf("_____________________________\n  A B C");
     for(x=0; x<3;x++){
         printf("\n%d ",x+1);
         for(y=0; y<3; y++){
@@ -112,10 +113,11 @@ void display_grid(int grid[3][3]){
 }
 
 point input_play(){
-    int valid=0;
+    int valid=0,x=0,y=0;
     char input[4];  // = [a,1,\n,\0]
-    const char *valid_col = "abc";
+    const char *valid_col = "abcABC";
     const char *valid_row = "123";
+    char col='a',row='1';
     
     do{
         valid = 0;
@@ -132,8 +134,8 @@ point input_play(){
                 empty_buffer();
             
             // Check format
-            char col = input[0];
-            char row = input[1];
+            col = input[0];
+            row = input[1];
             if(!strchr(valid_col, col) || !strchr(valid_row,row))
                 valid = 1;
         }
@@ -142,7 +144,34 @@ point input_play(){
             printf("Invalid input\n\n");
     }while(valid);
     
-    point p={0,0};
+    // Convert input to point
+    switch(col){
+        case 'a' :
+        case 'A' :
+            y = 0;
+            break;
+        case 'b' :
+        case 'B' :
+            y = 1;
+            break;
+        case 'c' :
+        case 'C' :
+            y = 2;
+            break;
+    }
+    switch(row){
+        case '1' :
+            x = 0;
+            break;
+        case '2' :
+            x = 1;
+            break;
+        case '3' :
+            x = 2;
+            break;
+    }    
+    point p={x,y};
+    
     return p;
 }
 
@@ -204,17 +233,15 @@ int check_grid(int grid[3][3]){
             if(grid[x][y] == 0)
                 return 0;
         }
-    }
-        
+    }        
     return 3;
 }
 
 void empty_buffer(void){
-    int c;
-  
+    int c;  
     do {
         c = getchar();
-    } while (c != '\n' && c != EOF);
+    }while(c != '\n' && c != EOF);
 }
 
 
