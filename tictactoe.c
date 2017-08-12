@@ -106,7 +106,14 @@ void display_grid(int grid[3][3]){
 }
 
 void do_play(int grid[3][3],player *p){
-    grid[0][0] = p->play_value;
+    int x,y = 0;
+    printf("x= ");
+    scanf ("%d",&x);
+    empty_buffer();
+        printf("y= ");
+    scanf ("%d",&y);
+    empty_buffer();
+    grid[x][y] = p->play_value;
 }
 
 int check_grid(int grid[3][3]){
