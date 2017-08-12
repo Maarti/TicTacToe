@@ -63,12 +63,20 @@ int main(int argc, char *argv[]) {
         {10,1,0}
     };
     int result = 0;
+    player *current_player = &p1;
     
-    // Game    
-    printf("\nIt's your turn %s :",p1.name);
-    display_grid(grid);
-    result = check_grid(grid);
-    printf(" result = %d \n",result);
+    // Game
+    do{
+        printf("\nIt's your turn %s :",current_player->name);
+        display_grid(grid);
+        //do_play(grid,current_player);        
+        result = check_grid(grid);
+        printf(" result = %d \n",result);
+        if(current_player == &p1)
+            current_player = &p2;
+        else
+            current_player = &p1;
+     }while(check_grid(grid) == 0);
     
     return 0;
 }
