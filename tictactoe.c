@@ -12,7 +12,7 @@ typedef struct {
 } player;
 
 typedef struct {
-    char x;
+    int x;
     int y;
 } point;
 
@@ -72,11 +72,10 @@ int main(int argc, char *argv[]) {
     
     // Game
     do{
-        printf("\nIt's your turn %s :",current_player->name);
         display_grid(grid);
+        printf("\nIt's your turn %s :\n",current_player->name);
         do_play(grid,current_player);        
         result = check_grid(grid);
-        printf(" result = %d \n",result);
         if(current_player == &p1)
             current_player = &p2;
         else
@@ -96,24 +95,60 @@ player init_player(int numPlayer, int play_value){
 
 void display_grid(int grid[3][3]){
     int x,y;
+    printf("_____________________________\n  a b c");
     for(x=0; x<3;x++){
-        printf("\n");
+        printf("\n%d ",x+1);
         for(y=0; y<3; y++){
-            printf("-%d",grid[x][y]);
+            int val = grid[x][y];
+            if(val == PLAY_VALUE_1)
+                printf("X ");
+            else if(val==PLAY_VALUE_2)
+                printf("O ");
+            else
+                printf("  ");
         }
     }
     printf("\n");
 }
 
+point input_play(){
+    int valid=0;
+    char input[4];  // = [a,1,\n,\0]
+    const char *valid_col = "abc";
+    const char *valid_row = "123";
+    
+    do{
+        valid = 0;
+        printf("Play where ? (ex : a1) ");
+        fgets(input, 4, stdin);
+        int length = strlen(input);
+        
+        // Check size
+        if(length!=3)
+            valid = 1;
+        else{
+            // if last char different from \n, it means the buffer is not empty
+            if(input[2]!='\n')
+                empty_buffer();
+            
+            // Check format
+            char col = input[0];
+            char row = input[1];
+            if(!strchr(valid_col, col) || !strchr(valid_row,row))
+                valid = 1;
+        }
+                
+        if(valid==1)
+            printf("Invalid input\n\n");
+    }while(valid);
+    
+    point p={0,0};
+    return p;
+}
+
 void do_play(int grid[3][3],player *p){
-    int x,y = 0;
-    printf("x= ");
-    scanf ("%d",&x);
-    empty_buffer();
-        printf("y= ");
-    scanf ("%d",&y);
-    empty_buffer();
-    grid[x][y] = p->play_value;
+    point play_point = input_play();
+    grid[play_point.x][play_point.y] = p->play_value;
 }
 
 int check_grid(int grid[3][3]){
