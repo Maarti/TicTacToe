@@ -20,9 +20,9 @@ typedef struct histo {
 } history;
     
 
-void display_grid(int[3][3]);   // Display the grid
-void init_player(player *);     // Let a player choose a name
-void empty_buffer(void);	    // Empty buffer
+void display_grid(int[3][3]);       // Display the grid
+player init_player(int numPlayer);  // Let a player choose a name
+void empty_buffer(void);	        // Empty the buffer
 
 int main(int argc, char *argv[]) {
     
@@ -51,12 +51,11 @@ int main(int argc, char *argv[]) {
     printf("%s",welcome);
     
     history * histo = malloc(sizeof(history));
-    player p1, p2;
-    init_player(&p1);
-    init_player(&p2);
+    player p1 = init_player(1);
+    player p2 = init_player(2);
     
-    printf("\nIt's your turn %s :",p1.name);
-    
+    printf("\nIt's your turn p1 %s :",p1.name);
+       
     int grid[3][3]={
         {1,0,0},
         {0,10,0},
@@ -67,9 +66,12 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void init_player(player * p){
-    (*p).name = "Player1";
-    (*p).score = 0;
+player init_player(int numPlayer){
+    player p={malloc(sizeof(char) * 21 ),0};    // Allocation of char[21] for name
+    printf("Player %d, what's your name? ",numPlayer);
+    fgets(p.name, 20, stdin);
+    p.name = strtok(p.name, "\n");  // remove \n of name
+    return p;
 }
 
 void display_grid(int grid[3][3]){
