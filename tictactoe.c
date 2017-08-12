@@ -2,9 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define PLAY_VALUE_1 1
+#define PLAY_VALUE_2 10
+
 typedef struct {
     char * name;
     int score;
+    int play_value;
 } player;
 
 typedef struct {
@@ -21,13 +25,14 @@ typedef struct histo {
 
 
 void display_grid(int[3][3]);       // Display the grid
-player init_player(int);            // Let a player choose a name
+player init_player(int,int);        // Let a player choose a name
+void do_play(int[3][3],player *);   // Let a player play in the grid
 int check_grid(int[3][3]);          // Check if win or finish
 void empty_buffer(void);            // Empty the buffer
 
 
 int main(int argc, char *argv[]) {
-    
+
     // Init mode GUI (=1) or CLI (=0)
     int mode = 0;
     if(argc > 1){
@@ -55,8 +60,8 @@ int main(int argc, char *argv[]) {
     
     // Game initialization
     history * histo = malloc(sizeof(history));
-    player p1 = init_player(1);
-    player p2 = init_player(2);
+    player p1 = init_player(1,PLAY_VALUE_1);
+    player p2 = init_player(2,PLAY_VALUE_2);
     int grid[3][3]={
         {1,10,1},
         {1,10,10},
@@ -69,7 +74,7 @@ int main(int argc, char *argv[]) {
     do{
         printf("\nIt's your turn %s :",current_player->name);
         display_grid(grid);
-        //do_play(grid,current_player);        
+        do_play(grid,current_player);        
         result = check_grid(grid);
         printf(" result = %d \n",result);
         if(current_player == &p1)
@@ -81,8 +86,8 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-player init_player(int numPlayer){
-    player p={malloc(sizeof(char) * 21 ),0};    // Allocation of char[21] for name
+player init_player(int numPlayer, int play_value){
+    player p={malloc(sizeof(char) * 21 ),0,play_value}; // Allocation of char[21] for name
     printf("Player %d, what's your name? ",numPlayer);
     fgets(p.name, 20, stdin);
     p.name = strtok(p.name, "\n");  // remove \n of name
@@ -100,6 +105,10 @@ void display_grid(int grid[3][3]){
     printf("\n");
 }
 
+void do_play(int grid[3][3],player *p){
+    grid[0][0] = p->play_value;
+}
+
 int check_grid(int grid[3][3]){
     /*  return 0 : continue playing
         return 1 : player 1 won
@@ -115,9 +124,9 @@ int check_grid(int grid[3][3]){
         for(y=0;y<3;y++){
             sum+=grid[x][y];
         }
-        if(sum==3)
+        if(sum==PLAY_VALUE_1*3)
             return 1;
-        if(sum==30)
+        if(sum==PLAY_VALUE_2*3)
             return 2;
     }
     
@@ -127,24 +136,24 @@ int check_grid(int grid[3][3]){
         for(x=0;x<3;x++){
             sum+=grid[x][y];
         }
-        if(sum==3)
+        if(sum==PLAY_VALUE_1*3)
             return 1;
-        if(sum==30)
+        if(sum==PLAY_VALUE_2*3)
             return 2;
     }
     
     // Check diagonal 1
     sum = grid[0][0] + grid[1][1] + grid[2][2];
-    if(sum==3)
+    if(sum==PLAY_VALUE_1*3)
         return 1;
-    if(sum==30)
+    if(sum==PLAY_VALUE_2*3)
         return 2;
         
     // Check diagonal 1
     sum = grid[0][2] + grid[1][1] + grid[2][0];
-    if(sum==3)
+    if(sum==PLAY_VALUE_1*3)
         return 1;
-    if(sum==30)
+    if(sum==PLAY_VALUE_2*3)
         return 2;
     
     // Check if finished
