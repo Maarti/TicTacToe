@@ -9,6 +9,7 @@ typedef struct {
     char * name;
     int score;
     int play_value;
+    char character;
 } player;
 
 typedef struct {
@@ -24,8 +25,8 @@ typedef struct histo {
 } history;
 
 
-void display_grid(int[3][3]);       // Display the grid
-player init_player(int,int);        // Let a player choose a name
+void display_grid(int[3][3],player *,player *);// Display the grid
+player init_player(int,int,char);   // Let a player choose a name
 point input_play(void);             // Ask user input and convert it to point
 void do_play(int[3][3],player *);   // Let a player play in the grid
 int check_grid(int[3][3]);          // Check if win or finish
@@ -61,8 +62,8 @@ int main(int argc, char *argv[]) {
     
     // Game initialization
     history * histo = malloc(sizeof(history));
-    player p1 = init_player(1,PLAY_VALUE_1);
-    player p2 = init_player(2,PLAY_VALUE_2);
+    player p1 = init_player(1,PLAY_VALUE_1,'X');
+    player p2 = init_player(2,PLAY_VALUE_2,'O');
     int grid[3][3]={
         {0,0,0},
         {0,0,0},
@@ -73,7 +74,7 @@ int main(int argc, char *argv[]) {
     
     // Game
     do{
-        display_grid(grid);
+        display_grid(grid,&p1,&p2);
         printf("\nIt's your turn %s :\n",current_player->name);
         do_play(grid,current_player);        
         result = check_grid(grid);
@@ -86,15 +87,15 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-player init_player(int numPlayer, int play_value){
-    player p={malloc(sizeof(char) * 21 ),0,play_value}; // Allocation of char[21] for name
+player init_player(int numPlayer, int play_value, char character){
+    player p={malloc(sizeof(char) * 21 ),0,play_value,character}; // Allocation of char[21] for name
     printf("Player %d, what's your name? ",numPlayer);
     fgets(p.name, 20, stdin);
     p.name = strtok(p.name, "\n");  // remove \n of name
     return p;
 }
 
-void display_grid(int grid[3][3]){
+void display_grid(int grid[3][3],player *p1, player *p2){
     int x,y;
     printf("_____________________________\n  A B C");
     for(x=0; x<3;x++){
@@ -102,9 +103,9 @@ void display_grid(int grid[3][3]){
         for(y=0; y<3; y++){
             int val = grid[x][y];
             if(val == PLAY_VALUE_1)
-                printf("X ");
+                printf("%c ",p1->character);
             else if(val==PLAY_VALUE_2)
-                printf("O ");
+                printf("%c ",p2->character);
             else
                 printf("  ");
         }
