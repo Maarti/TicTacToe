@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
         // Game
         do{
             display_grid(grid,&p1,&p2);
-            printf("\nIt's your turn %s :\n",current_player->name);
+            printf("\nIt's your turn %s (%c) :\n",current_player->name,current_player->character);
             do_play(grid,current_player,&cur_histo);
             result = check_grid(grid);
             if(current_player == &p1)
@@ -110,7 +110,6 @@ int main(int argc, char *argv[]) {
          }
          printf("\nScores :\n%d : %s\n%d : %s\n",p1.score,p1.name,p2.score,p2.name);
          sleep(3);
-         printf("ok0");
          watch_replay(histo,&p1,&p2);
     }
     return 0;
@@ -279,12 +278,13 @@ int check_grid(int grid[3][3]){
 }
 
 void watch_replay(history *start_histo,player * p1,player * p2){
-    printf("REPLAY :\n");
+    printf("\n\nReplay :\n");
     int grid[3][3]={
             {0,0,0},
             {0,0,0},
             {0,0,0}
     };
+    sleep(1);
     history *histo = start_histo;
     do{
         point play = histo->point;
