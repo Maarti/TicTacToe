@@ -125,6 +125,7 @@ player init_player(int numPlayer, int play_value, char character){
 
 void display_grid(int grid[3][3],player *p1, player *p2){
     int x,y;
+    system("clear");
     printf("_____________________________\n  A B C");
     for(x=0; x<3;x++){
         printf("\n%d ",x+1);
@@ -278,6 +279,7 @@ int check_grid(int grid[3][3]){
 }
 
 void watch_replay(history *start_histo,player * p1,player * p2){
+    system("clear");
     printf("\n\nReplay :\n");
     int grid[3][3]={
             {0,0,0},
@@ -293,6 +295,7 @@ void watch_replay(history *start_histo,player * p1,player * p2){
         histo = histo->next;
         sleep(1);
     }while(histo->next != NULL);
+    sleep(1);
 }
 
 void empty_buffer(void){
