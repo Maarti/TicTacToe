@@ -31,3 +31,19 @@ gcc -o tictactoe tictactoe.c
 ```bash
 ./tictactoe gui
 ```
+
+
+## Memo
+
+### Debug with GDB :
+```bash
+gcc -o tictactoe -g tictactoe.c
+gdb -q ./tictactoe
+(gdb) run cli
+```
+
+### Display all warnings as errors :
+Correct all these warnings !
+```bash
+gcc -o tictactoe -Wall -Wextra -Werror --std=c99 tictactoe.c
+```
