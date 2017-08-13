@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string.h> // strlen() strchr()
+#include <unistd.h> // sleep()
 
 #define PLAY_VALUE_1 1
 #define PLAY_VALUE_2 10
@@ -20,17 +21,18 @@ typedef struct {
 // Linked list keeping the history of the game
 typedef struct histo {
     point point;
-    player player;
+    player *player;
     struct histo * next;
 } history;
 
 
 void display_grid(int[3][3],player *,player *);// Display the grid
-player init_player(int,int,char);   // Let a player choose a name
-point input_play(int[3][3]);        // Ask user input and convert it to point
-void do_play(int[3][3],player *);   // Let a player play in the grid
-int check_grid(int[3][3]);          // Check if win or finish
-void empty_buffer(void);            // Empty the buffer
+player init_player(int,int,char);           // Let a player choose a name
+point input_play(int[3][3]);                // Ask user input and convert it to point
+void do_play(int[3][3],player *,history **);// Let a player play in the grid
+int check_grid(int[3][3]);                  // Check if win or finish
+void empty_buffer(void);                    // Empty the buffer
+void watch_replay(history*,player*,player*);// Re-watch the game
 
 
 int main(int argc, char *argv[]) {
@@ -47,7 +49,7 @@ int main(int argc, char *argv[]) {
         	return 1;
         }
     }else{
-        char modeType[2];
+        //char modeType[2];
         mode = -1;
         while(mode != 0 && mode != 1 ){
             printf("Choose mode :\n0 = CLI\n1 = GUI\n");
@@ -60,8 +62,7 @@ int main(int argc, char *argv[]) {
     char *welcome = "Welcome to TicTacToe!\n"; //this string can only be read
     printf("%s",welcome);
     
-    // Game initialization
-    history * histo = malloc(sizeof(history));
+    // Game initialization    
     player p1 = init_player(1,PLAY_VALUE_1,'X');
     player p2 = init_player(2,PLAY_VALUE_2,'O');
     
@@ -73,12 +74,14 @@ int main(int argc, char *argv[]) {
         };
         int result = 0;
         player *current_player = &p1;
+        history * histo = malloc(sizeof(history));
+        history * cur_histo = histo;
         
         // Game
         do{
             display_grid(grid,&p1,&p2);
             printf("\nIt's your turn %s :\n",current_player->name);
-            do_play(grid,current_player);        
+            do_play(grid,current_player,&cur_histo);
             result = check_grid(grid);
             if(current_player == &p1)
                 current_player = &p2;
@@ -105,7 +108,10 @@ int main(int argc, char *argv[]) {
                 return 1;
                 break;
          }
-         printf("\nScores :\n%d - %s\n%d : %s\n",p1.score,p1.name,p2.score,p2.name);
+         printf("\nScores :\n%d : %s\n%d : %s\n",p1.score,p1.name,p2.score,p2.name);
+         sleep(3);
+         printf("ok0");
+         watch_replay(histo,&p1,&p2);
     }
     return 0;
 }
@@ -205,9 +211,14 @@ point input_play(int grid[3][3]){
     return p;
 }
 
-void do_play(int grid[3][3],player *p){
+void do_play(int grid[3][3],player *p,history **cur_histo){
     point play_point = input_play(grid);
     grid[play_point.x][play_point.y] = p->play_value;
+    (*cur_histo)->point = play_point;
+    (*cur_histo)->player = p;
+    history *new_histo = malloc(sizeof(history));
+    (*cur_histo)->next = new_histo;
+    *cur_histo = new_histo;
 }
 
 int check_grid(int grid[3][3]){
@@ -265,6 +276,23 @@ int check_grid(int grid[3][3]){
         }
     }        
     return 3;
+}
+
+void watch_replay(history *start_histo,player * p1,player * p2){
+    printf("REPLAY :\n");
+    int grid[3][3]={
+            {0,0,0},
+            {0,0,0},
+            {0,0,0}
+    };
+    history *histo = start_histo;
+    do{
+        point play = histo->point;
+        grid[play.x][play.y] = histo->player->play_value;
+        display_grid(grid,p1,p2);
+        histo = histo->next;
+        sleep(1);
+    }while(histo->next != NULL);
 }
 
 void empty_buffer(void){
